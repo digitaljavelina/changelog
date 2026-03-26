@@ -548,6 +548,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 - **Google** - Gemini 3 Flash & TTS APIs
 - **Resend** - Email delivery
 - **Vite** - Lightning-fast builds
+- **Mark Kashef** - For doing the heavy lifting in building and providing this repo
 
 ---
 
