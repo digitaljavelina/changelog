@@ -1,4 +1,4 @@
-# Changelog Master
+# Changelog
 
 **The ultimate changelog tracking and notification system powered by AI.**
 
