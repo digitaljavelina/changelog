@@ -22,15 +22,17 @@ Changelog Master monitors software changelogs (like Claude Code, VS Code, or any
 ## Features
 
 ### Multi-Source Monitoring
+
 Track multiple changelog sources simultaneously. Switch between them instantly or monitor all at once.
 
-```
+```text
 Claude Code ─────┐
 VS Code ─────────┼──► Changelog Master ──► Unified Dashboard
 Antigravity IDE ─┘
 ```
 
 ### AI-Powered Analysis
+
 Gemini 3 Flash analyzes each changelog and extracts:
 
 - **TL;DR** - Markdown-formatted executive summary
@@ -41,34 +43,40 @@ Gemini 3 Flash analyzes each changelog and extracts:
 - **Action Items** - What you need to do
 
 ### Analysis History
+
 Browse previous analyses for any changelog version. Never lose context when new versions overwrite the current view - just select from the history dropdown to revisit past summaries.
 
 ### Text-to-Speech Audio
+
 Listen to changelog summaries using Gemini 2.5 Flash TTS with 30+ voice options:
 
-| Voice | Tone |
-|-------|------|
-| Charon | Informative |
-| Puck | Upbeat |
-| Kore | Firm |
-| Zephyr | Bright |
-| Aoede | Breezy |
-| *...and 25 more* | |
+| Voice            | Tone        |
+| ---------------- | ----------- |
+| Charon           | Informative |
+| Puck             | Upbeat      |
+| Kore             | Firm        |
+| Zephyr           | Bright      |
+| Aoede            | Breezy      |
+| *...and 25 more* |             |
 
 **Audio Features:**
+
 - **Seekable Progress Bar** - Click anywhere on the progress bar to jump to that position
 - **Auto-Restore** - Last played audio is automatically restored on page reload (ready to play)
 - **SQLite Caching** - Generated audio is cached in the database, no regeneration needed
 - **Adjustable Playback Speed** - 0.5x to 2x speed options
 
 ### Email Notifications
+
 Automatic emails when new versions are detected, including:
+
 - HTML-formatted summary
 - Categorized changes with severity indicators
 - Audio file attachment (WAV format)
 - **Scheduled Summaries** - Option to send emails on every check, not just new versions
 
 ### Changelog Chat
+
 Ask questions about any changelog versions using the AI assistant:
 
 > "What breaking changes were introduced between 2.0.70 and 2.0.74?"
@@ -79,7 +87,7 @@ Ask questions about any changelog versions using the AI assistant:
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                         FRONTEND (React)                         │
 ├─────────────┬─────────────┬─────────────┬───────────────────────┤
@@ -117,16 +125,16 @@ Ask questions about any changelog versions using the AI assistant:
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 19 + TypeScript + Vite |
-| Styling | Tailwind CSS 4 (Anthropic-inspired design) |
-| Backend | Express.js + TypeScript |
-| Database | SQLite (better-sqlite3) |
-| AI Analysis | Gemini 3 Flash (`gemini-3-flash-preview`) |
+| Layer          | Technology                                             |
+| -------------- | ------------------------------------------------------ |
+| Frontend       | React 19 + TypeScript + Vite                           |
+| Styling        | Tailwind CSS 4 (Anthropic-inspired design)             |
+| Backend        | Express.js + TypeScript                                |
+| Database       | SQLite (better-sqlite3)                                |
+| AI Analysis    | Gemini 3 Flash (`gemini-3-flash-preview`)              |
 | Text-to-Speech | Gemini 2.5 Flash TTS (`gemini-2.5-flash-preview-tts`) |
-| Email | Resend API |
-| Scheduling | node-cron |
+| Email          | Resend API                                             |
+| Scheduling     | node-cron                                              |
 
 ---
 
@@ -183,20 +191,45 @@ npm run dev:server # Backend on http://localhost:3001
 
 > **Important:** Always use `npm run dev:all` to start both servers. The backend is required for audio caching, analysis storage, and chat persistence to work properly.
 
+### Docker (Homelab / Production)
+
+```bash
+# Clone and configure
+git clone https://github.com/earlyaidopters/changelog-master.git
+cd changelog-master
+cp .env.example .env
+# Edit .env with your API keys
+
+# Build and run
+docker compose up -d --build
+```
+
+The app will be available at `http://<your-server-ip>:3001`. SQLite data persists in a Docker volume.
+
+To update:
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+If you're running behind a reverse proxy (Traefik, Caddy, nginx), point it at port `3001`.
+
 ---
 
 ## Usage Guide
 
 ### Managing Changelog Sources
 
-1. Click the **link icon** (🔗) in the header
+1. Click the **link icon** in the header
 2. Click **"Add Changelog Source"**
 3. Enter a name and the raw markdown URL
 4. Click **Test** to validate the URL works
 5. Click **Add Source** to save
 
 **Example URLs:**
-```
+
+```text
 # Claude Code
 https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md
 
@@ -210,6 +243,7 @@ https://raw.githubusercontent.com/{owner}/{repo}/main/CHANGELOG.md
 ### Switching Between Sources
 
 When you have multiple sources:
+
 - Hover over the **dropdown arrow** next to the title
 - Click any source to switch
 - The app dynamically updates with that source's changelog
@@ -229,7 +263,7 @@ When you have multiple sources:
 
 ### Setting Up Email Notifications
 
-1. Click the **gear icon** (⚙️) for Settings
+1. Click the **gear icon** for Settings
 2. Toggle **"Notify me when a new version is released"**
 3. Optionally enable **"Send email on every check"** for scheduled summaries (even without new versions)
 4. Select check frequency (e.g., "Every hour", "Once a week", "Every two weeks")
@@ -238,7 +272,7 @@ When you have multiple sources:
 
 ### Chatting About Changelogs
 
-1. Click the **chat bubble** (💬) in the bottom-right
+1. Click the **chat bubble** in the bottom-right
 2. Select which versions to include in context
 3. Ask any question about the changes
 4. Previous conversations are saved and can be resumed
@@ -249,48 +283,48 @@ When you have multiple sources:
 
 ### Sources
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/sources` | List all changelog sources |
-| GET | `/api/sources/:id` | Get single source details |
-| POST | `/api/sources` | Add new source |
-| PATCH | `/api/sources/:id` | Update source (name, URL, active) |
-| DELETE | `/api/sources/:id` | Delete source and history |
-| GET | `/api/sources/:id/changelog` | Fetch changelog markdown |
-| POST | `/api/sources/test` | Test if URL is valid changelog |
+| Method | Endpoint                     | Description                       |
+| ------ | ---------------------------- | --------------------------------- |
+| GET    | `/api/sources`               | List all changelog sources        |
+| GET    | `/api/sources/:id`           | Get single source details         |
+| POST   | `/api/sources`               | Add new source                    |
+| PATCH  | `/api/sources/:id`           | Update source (name, URL, active) |
+| DELETE | `/api/sources/:id`           | Delete source and history         |
+| GET    | `/api/sources/:id/changelog` | Fetch changelog markdown          |
+| POST   | `/api/sources/test`          | Test if URL is valid changelog    |
 
 ### Analysis
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/analysis` | List all cached analyses |
-| GET | `/api/analysis/:version` | Get cached analysis |
-| POST | `/api/analysis/:version` | Save analysis to cache |
+| Method | Endpoint                  | Description              |
+| ------ | ------------------------- | ------------------------ |
+| GET    | `/api/analysis`           | List all cached analyses |
+| GET    | `/api/analysis/:version`  | Get cached analysis      |
+| POST   | `/api/analysis/:version`  | Save analysis to cache   |
 
 ### Audio
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/audio/:hash/:voice` | Get cached audio |
-| POST | `/api/audio` | Save audio to cache |
+| Method | Endpoint                  | Description         |
+| ------ | ------------------------- | ------------------- |
+| GET    | `/api/audio/:hash/:voice` | Get cached audio    |
+| POST   | `/api/audio`              | Save audio to cache |
 
 ### Chat
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/chat` | Send message, get AI response |
-| GET | `/api/conversations` | List all conversations |
-| GET | `/api/conversations/:id` | Get conversation with messages |
-| POST | `/api/conversations` | Create new conversation |
-| DELETE | `/api/conversations/:id` | Delete conversation |
+| Method | Endpoint                  | Description                    |
+| ------ | ------------------------- | ------------------------------ |
+| POST   | `/api/chat`               | Send message, get AI response  |
+| GET    | `/api/conversations`      | List all conversations         |
+| GET    | `/api/conversations/:id`  | Get conversation with messages |
+| POST   | `/api/conversations`      | Create new conversation        |
+| DELETE | `/api/conversations/:id`  | Delete conversation            |
 
 ### Monitoring
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/monitor/status` | Get cron job status |
-| POST | `/api/monitor/check` | Trigger manual check |
-| GET | `/api/monitor/history` | Get version detection history |
+| Method | Endpoint               | Description                    |
+| ------ | ---------------------- | ------------------------------ |
+| GET    | `/api/monitor/status`  | Get cron job status            |
+| POST   | `/api/monitor/check`   | Trigger manual check           |
+| GET    | `/api/monitor/history` | Get version detection history  |
 
 ---
 
@@ -363,15 +397,15 @@ CREATE TABLE settings (
 
 The monitoring system uses `node-cron` to check for new versions:
 
-| Setting | Cron Expression | Schedule |
-|---------|----------------|----------|
-| Every 5 minutes | `*/5 * * * *` | `:00, :05, :10...` |
-| Every 15 minutes | `*/15 * * * *` | `:00, :15, :30, :45` |
-| Every hour | `0 * * * *` | `:00` each hour |
-| Every 6 hours | `0 */6 * * *` | `00:00, 06:00, 12:00, 18:00` |
-| Once a day | `0 0 * * *` | Midnight |
-| Once a week | `0 0 * * 0` | Sunday at midnight |
-| Every two weeks | `0 0 1,15 * *` | 1st and 15th of month |
+| Setting          | Cron Expression | Schedule                      |
+| ---------------- | --------------- | ----------------------------- |
+| Every 5 minutes  | `*/5 * * * *`   | `:00, :05, :10...`            |
+| Every 15 minutes | `*/15 * * * *`  | `:00, :15, :30, :45`          |
+| Every hour       | `0 * * * *`     | `:00` each hour               |
+| Every 6 hours    | `0 */6 * * *`   | `00:00, 06:00, 12:00, 18:00`  |
+| Once a day       | `0 0 * * *`     | Midnight                      |
+| Once a week      | `0 0 * * 0`     | Sunday at midnight            |
+| Every two weeks  | `0 0 1,15 * *`  | 1st and 15th of month         |
 
 When a new version is detected:
 
@@ -385,7 +419,7 @@ When a new version is detected:
 
 ## Project Structure
 
-```
+```text
 changelog-master/
 ├── server/
 │   └── index.ts          # Express backend with all API routes
@@ -414,10 +448,8 @@ changelog-master/
 │   │   └── index.ts          # TypeScript interfaces
 │   ├── App.tsx               # Main application
 │   └── main.tsx              # Entry point
-├── docs/
-│   ├── claude-changelog-app.md  # Original spec
-│   ├── gemini-3.md              # Gemini API reference
-│   └── audio_understanding.md   # TTS documentation
+├── Dockerfile                # Multi-stage Docker build
+├── docker-compose.yml        # Production deployment config
 ├── data/
 │   └── audio.db              # SQLite database (gitignored)
 └── .env                      # API keys (gitignored)
@@ -428,6 +460,7 @@ changelog-master/
 ## Customization
 
 ### Default Theme
+
 Set dark mode as the default in Settings > Appearance. The app remembers your preference across sessions.
 
 ### Adding a Custom Voice
@@ -465,23 +498,28 @@ The HTML email is generated in `generateEmailHtml()` in `server/index.ts`.
 ## Troubleshooting
 
 ### "Failed to fetch changelog"
+
 - Check if the URL returns raw markdown (not HTML)
 - Use the **Test** button in Sources panel to validate
 
 ### "Analysis failed"
+
 - Verify your Gemini API key is correct
 - Check the browser console for error details
 
 ### "Audio not playing"
+
 - Audio is generated as PCM and converted to WAV
 - Ensure browser supports WAV playback
 
 ### "Audio regenerates every time"
+
 - Make sure the backend server is running (`npm run dev:all`)
 - Audio caching requires the `/api/audio` endpoints on port 3001
 - Check browser console for "Using cached audio from SQLite" message
 
 ### "Email not sending"
+
 - Verify Resend API key and NOTIFY_EMAIL in `.env`
 - Check server logs for error messages
 - Use "Send Demo Email" to test
@@ -513,6 +551,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-<p align="center">
-  <b>Built with AI, for developers who value their time.</b>
-</p>
+**Built with AI, for developers who value their time.**
